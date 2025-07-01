@@ -6,7 +6,10 @@ import { Users, ListChecks, DollarSign, Briefcase, PlusCircle, Edit2, Trash2, Sa
 
 // --- CONFIGURARE FIREBASE ---
 const firebaseConfig = JSON.parse(import.meta.env.VITE_FIREBASE_CONFIG);
-const appId = import.meta.env.VITE_APP_ID;
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const appId = import.meta.env.VITE_APP_ID || 'planificator-nunta-app';
 
 // --- COMPONENTE UTILITARE (MODAL, HOOKS) ---
 const Modal = ({ isOpen, onClose, children, title, type = 'default' }) => {
