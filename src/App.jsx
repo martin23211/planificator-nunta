@@ -330,15 +330,15 @@ const Budget = ({ userId, showAlert, showConfirm, isPremium, onUpgrade }) => {
     const closeItemModal = () => { setIsItemModalOpen(false); };
     
     const spentPerCategory = items.reduce((acc, item) => {
-        const cost = item.actualCost || 0;
-        if (!acc[item.category]) acc[item.category] = 0;
+        const cost = Number(item.actualCost) || 0;
+        if (!acc[item.category]) { acc[item.category] = 0; }
         acc[item.category] += cost;
         return acc;
     }, {});
 
-    const totalEstimated = items.reduce((s, i) => s + (i.estimatedCost || 0), 0);
-    const totalActual = items.reduce((s, i) => s + (i.actualCost || 0), 0);
-    const totalPaid = items.filter(i => i.paid).reduce((s, i) => s + (i.actualCost || 0), 0);
+    const totalEstimated = items.reduce((s, i) => s + (Number(i.estimatedCost) || 0), 0);
+    const totalActual = items.reduce((s, i) => s + (Number(i.actualCost) || 0), 0);
+    const totalPaid = items.filter(i => i.paid).reduce((s, i) => s + (Number(i.actualCost) || 0), 0);
 
     return (
         <div className="p-6 bg-green-50 rounded-lg shadow-md space-y-8">
