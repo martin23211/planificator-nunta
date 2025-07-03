@@ -51,116 +51,37 @@ const useConfirmModal = () => {
 };
 
 
-// --- DATE PREDEFINITE (NOUA STRUCTURĂ) ---
+// --- DATE PREDEFINITE ---
 const newDefaultTasks = {
   "12+ Luni Înainte": {
-    "Planificare Inițială": [
-      { name: "Anunțați logodna familiei și prietenilor.", description: "Împărtășiți vestea cea mare cu cei dragi." },
-      { name: "Stabiliți o viziune pentru nuntă (stil, formalitate, număr de invitați).", description: "Discutați despre cum vă imaginați ziua nunții: elegantă, rustică, restrânsă, etc." },
-      { name: "Alegeți o dată aproximativă pentru nuntă.", description: "Luați în considerare anotimpul, disponibilitatea persoanelor cheie și eventualele sărbători." }
-    ],
-    "Buget": [
-      { name: "Stabiliți bugetul total al nunții.", description: "Analizați finanțele și decideți o sumă totală realistă pe care sunteți dispuși să o cheltuiți." },
-      { name: "Creați o foaie de calcul pentru a urmări cheltuielile.", description: "Folosiți secțiunea Buget a aplicației pentru a ține evidența fiecărui cost." },
-      { name: "Decideți cine contribuie financiar și cu ce sume.", description: "Discuție deschisă cu părinții sau alte persoane implicate, dacă este cazul." }
-    ],
-    "Invitați": [
-      { name: "Creați o listă preliminară de invitați.", description: "Faceți o listă inițială cu toți cei pe care ați dori să-i aveți alături." }
-    ],
-    "Echipa de Nuntă": [
-      { name: "Alegeți nașii.", description: "Selectați persoanele care vă vor fi alături și vă vor ghida în acest proces." },
-      { name: "Alegeți domnișoarele și cavalerii de onoare.", description: "Invitați prietenii apropiați să facă parte din alaiul vostru." }
-    ]
+    "Planificare Inițială": [], "Buget": [], "Invitați": [], "Echipa de Nuntă": []
   },
   "10-12 Luni": {
-    "Locație & Biserică": [
-      { name: "Vizitați și rezervați locația pentru recepție.", description: "Asigurați-vă că semnați un contract clar care specifică toate detaliile." },
-      { name: "Rezervați biserica pentru ceremonia religioasă.", description: "Discutați cu preotul și stabiliți data și ora exactă." }
-    ],
-    "Furnizori Cheie": [
-      { name: "Angajați un wedding planner (opțional).", description: "Dacă bugetul permite, un planner vă poate economisi timp și stres." },
-      { name: "Rezervați fotograful și videograful.", description: "Analizați portofolii și alegeți stilul care vi se potrivește. Semnați contracte." },
-      { name: "Rezervați formația sau DJ-ul.", description: "Asigurați-vă că ați ascultat câteva mostre și că repertoriul corespunde preferințelor voastre." }
-    ]
+    "Locație & Biserică": [], "Furnizori Cheie": []
   },
   "8-10 Luni": {
-    "Ținute & Verighete": [
-      { name: "Începeți căutarea rochiei de mireasă.", description: "Probați diverse stiluri pentru a vedea ce vi se potrivește cel mai bine." },
-      { name: "Alegeți și comandați verighetele.", description: "Luați în considerare gravarea acestora cu un mesaj personal." }
-    ],
-    "Invitați & Save the Date": [
-      { name: "Trimiteți cardurile “Save the Date” (opțional).", description: "Este un gest util, în special pentru invitații care vin din alte localități." }
-    ]
+    "Ținute & Verighete": [], "Invitați & Save the Date": []
   },
   "6-8 Luni": {
-    "Furnizori Secundari": [
-      { name: "Rezervați floristul și decoratorul.", description: "Discutați despre tema nunții, culori și aranjamentele florale dorite." },
-      { name: "Contactați firme de catering (dacă locația nu oferă).", description: "Stabiliți meniuri de degustare." }
-    ],
-    "Planificare Lună de Miere": [
-      { name: "Planificați și rezervați luna de miere.", description: "Profitați de oferte și asigurați-vă că aveți toate documentele de călătorie în regulă." }
-    ]
+    "Furnizori Secundari": [], "Planificare Lună de Miere": []
   },
   "4-6 Luni": {
-    "Ținute & Accesorii": [
-      { name: "Comandați rochia de mireasă și costumul de mire.", description: "Asigurați-vă că ați luat în calcul timpul necesar pentru ajustări." },
-      { name: "Alegeți ținutele pentru domnișoarele de onoare.", description: "Coordonați stilul și culorile cu tema generală a nunții." }
-    ],
-    "Detalii Eveniment": [
-      { name: "Stabiliți meniul final și faceți degustarea.", description: "Alegeți preparatele finale împreună cu reprezentantul locației sau al firmei de catering." },
-      { name: "Comandați tortul de nuntă și candy bar-ul.", description: "Faceți o degustare pentru a alege aromele preferate." },
-      { name: "Înscrieți-vă la cursuri de dans (opțional).", description: "Pregătiți dansul mirilor pentru a impresiona invitații." }
-    ]
+    "Ținute & Accesorii": [], "Detalii Eveniment": []
   },
   "3-4 Luni": {
-    "Invitații & Papetărie": [
-      { name: "Finalizați lista de invitați.", description: "Treceți prin lista preliminară și stabiliți versiunea finală." },
-      { name: "Comandați invitațiile și restul papetăriei (meniuri, place carduri).", description: "Verificați textul cu atenție înainte de a trimite la tipar." }
-    ],
-    "Logistică": [
-      { name: "Rezervați transport pentru voi și pentru invitați (dacă este cazul).", description: "Luați în considerare o mașină de epocă, o limuzină sau un microbuz pentru invitați." }
-    ]
+    "Invitații & Papetărie": [], "Logistică": []
   },
   "2 Luni": {
-    "Documente & Legal": [
-      { name: "Verificați valabilitatea actelor de identitate.", description: "Asigurați-vă că nu expiră în preajma nunții." },
-      { name: "Interesați-vă de actele necesare pentru cununia civilă.", description: "Faceți o listă cu tot ce trebuie pregătit: certificate de naștere, etc." }
-    ],
-    "Detalii Finale": [
-      { name: "Trimiteți invitațiile.", description: "Ideal, cu 6-8 săptămâni înainte de eveniment." },
-      { name: "Cumpărați toate accesoriile pentru ținute.", description: "Pantofi, bijuterii, voal, butoni, etc." },
-      { name: "Faceți programare pentru probele de coafură și machiaj.", description: "Mergeți cu poze de inspirație pentru a obține look-ul dorit." }
-    ]
+    "Documente & Legal": [], "Detalii Finale": []
   },
   "1 Lună": {
-    "Confirmări & Plăți": [
-      { name: "Contactați invitații care nu au răspuns la invitație.", description: "Sunați pentru a obține un număr cât mai exact de participanți." },
-      { name: "Stabiliți o întâlnire finală cu fotograful/videograful.", description: "Discutați despre momentele cheie pe care doriți să le surprindă." },
-      { name: "Stabiliți playlist-ul final cu DJ-ul/formația.", description: "Includeți melodiile preferate și menționați ce stiluri muzicale doriți să predomine." }
-    ],
-    "Legal": [
-      { name: "Aplicați pentru certificatul prenupțial.", description: "Acesta este necesar pentru cununia civilă și are o valabilitate limitată." }
-    ]
+    "Confirmări & Plăți": [], "Legal": []
   },
   "1-2 Săptămâni": {
-    "Finalizarea Detaliilor": [
-      { name: "Comunicați numărul final de invitați la restaurant.", description: "Acesta este momentul în care stabiliți numărul final de meniuri." },
-      { name: "Realizați planul final al meselor (seating chart).", description: "Folosiți secțiunea 'Aranjare Mese' din aplicație pentru a organiza totul vizual." },
-      { name: "Confirmați toate detaliile cu furnizorii.", description: "Ora sosirii, programul, plățile finale etc." },
-      { name: "Faceți proba finală pentru rochia de mireasă și costumul de mire.", description: "Asigurați-vă că totul se potrivește perfect." }
-    ],
-    "Pregătiri Personale": [
-      { name: "Pregătiți plicurile cu banii pentru furnizori.", description: "Organizați plățile pentru a le avea la îndemână în ziua nunții." },
-      { name: "Faceți bagajul pentru luna de miere.", description: "Nu lăsați pe ultima sută de metri." }
-    ]
+    "Finalizarea Detaliilor": [], "Pregătiri Personale": []
   },
   "Ziua de Dinaintea Nunții": {
-    "Relaxare & Verificare": [
-      { name: "Mergeți la salon pentru manichiură și pedichiură.", description: "Un moment de răsfăț bine meritat." },
-      { name: "Verificați dacă toate ținutele și accesoriile sunt pregătite.", description: "Puneți totul deoparte pentru a evita stresul de dimineață." },
-      { name: "Delegați sarcini de ultim moment nașilor sau prietenilor.", description: "Nu încercați să faceți totul singuri." },
-      { name: "Relaxați-vă și odihniți-vă!", description: "Încercați să aveți o seară liniștită și să dormiți bine." }
-    ]
+    "Relaxare & Verificare": []
   }
 };
 
