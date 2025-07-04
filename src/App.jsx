@@ -4,14 +4,12 @@ import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken, 
 import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, onSnapshot, query, where, setDoc, getDoc } from 'firebase/firestore';
 import { Users, ListChecks, DollarSign, Briefcase, PlusCircle, Edit2, Trash2, Save, XCircle, CheckCircle, Circle, UserCircle2, AlertTriangle, LayoutDashboard, Table, Settings, CalendarHeart, Star, MailQuestion, HelpCircle, Lock, LogOut } from 'lucide-react';
 
-// --- FIREBASE CONFIGURATION ---
-// This will be populated by the environment.
-const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+// --- CONFIGURARE FIREBASE ---
+const firebaseConfig = JSON.parse(import.meta.env.VITE_FIREBASE_CONFIG);
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
-// This will be populated by the environment.
-const appId = typeof __app_id !== 'undefined' ? __app_id : 'planificator-nunta-app';
+const appId = import.meta.env.VITE_APP_ID || 'planificator-nunta-app';
 
 // --- UTILITY COMPONENTS (MODAL, HOOKS) ---
 const Modal = ({ isOpen, onClose, children, title, type = 'default' }) => {
