@@ -1,23 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { initializeApp } from 'firebase/app';
-import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth';
-import { getFirestore, collection, doc, onSnapshot, query, addDoc, updateDoc, deleteDoc, setDoc, getDoc, getDocs } from 'firebase/firestore';
-import { Users, ListChecks, DollarSign, Briefcase, PlusCircle, Edit2, Trash2, Save, XCircle, CheckCircle, Circle, UserCircle2, AlertTriangle, LayoutDashboard, Table, Settings, CalendarHeart, Flower2, HelpCircle, MailQuestion, Lock, Star, LogOut, LogIn } from 'lucide-react';
+import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from 'firebase/auth';
+import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, onSnapshot, query, where, setDoc, getDoc } from 'firebase/firestore';
+import { Users, ListChecks, DollarSign, Briefcase, PlusCircle, Edit2, Trash2, Save, XCircle, CheckCircle, Circle, UserCircle2, AlertTriangle, LayoutDashboard, Table, Settings, CalendarHeart, Flower2, HelpCircle, MailQuestion, Lock, Star } from 'lucide-react';
 
 // --- CONFIGURARE FIREBASE ---
-const firebaseConfig = {
-    apiKey: "AIzaSyDMdfNcDNF-Ft5NMsP30qSfq-Mnt44cia0",
-    authDomain: "cofetarie-461ad.firebaseapp.com",
-    projectId: "cofetarie-461ad",
-    storageBucket: "cofetarie-461ad.firebasestorage.app",
-    messagingSenderId: "517482091733",
-    appId: "1:517482091733:web:866bb9f5d257b5c3da7e5c",
-    measurementId: "G-TY8H64MDJZ"
-};
+const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : { apiKey: "DEMO_KEY", authDomain: "DEMO.firebaseapp.com", projectId: "DEMO" };
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
-const appId = 'planificator-nunta-app';
+const appId = typeof __app_id !== 'undefined' ? __app_id : 'planificator-nunta-app';
 
 // --- COMPONENTE UTILITARE (MODAL, HOOKS) ---
 const Modal = ({ isOpen, onClose, children, title, type = 'default' }) => {
