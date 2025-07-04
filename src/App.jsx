@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { initializeApp } from 'firebase/app';
-import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from 'firebase/auth';
-import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, onSnapshot, query, where, setDoc, getDoc } from 'firebase/firestore';
-import { Users, ListChecks, DollarSign, Briefcase, PlusCircle, Edit2, Trash2, Save, XCircle, CheckCircle, Circle, UserCircle2, AlertTriangle, LayoutDashboard, Table, Settings, CalendarHeart } from 'lucide-react';
+import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth';
+import { getFirestore, collection, doc, onSnapshot, query, addDoc, updateDoc, deleteDoc, setDoc, getDoc } from 'firebase/firestore';
+import { Users, ListChecks, DollarSign, Briefcase, PlusCircle, Edit2, Trash2, Save, XCircle, CheckCircle, Circle, UserCircle2, AlertTriangle, LayoutDashboard, Table, Settings, CalendarHeart, Flower2, HelpCircle, MailQuestion, Lock, Star, LogOut, LogIn } from 'lucide-react';
 
 // --- CONFIGURARE FIREBASE ---
 const firebaseConfig = JSON.parse(import.meta.env.VITE_FIREBASE_CONFIG);
