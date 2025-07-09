@@ -11,7 +11,7 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 const appId = import.meta.env.VITE_APP_ID || 'planificator-nunta-app';
 
-// --- UTILITY COMPONENTS (MODAL, HOOKS) ---
+// --- COMPONENTE UTILITARE (MODAL, HOOKS) ---
 const Modal = ({ isOpen, onClose, children, title, type = 'default' }) => {
   if (!isOpen) return null;
   let titleColor = 'text-gray-800';
@@ -51,120 +51,160 @@ const useConfirmModal = () => {
 };
 
 
-// --- DEFAULT DATA (NEW STRUCTURE) ---
+// --- DATE PREDEFINITE (NOUA STRUCTURĂ) ---
 const newDefaultTasks = {
-  "12+ Luni Înainte": {
-    "Planificare Inițială": [
-      { name: "Anunțați logodna familiei și prietenilor.", description: "Împărtășiți vestea cea mare cu cei dragi." },
-      { name: "Stabiliți o viziune pentru nuntă (stil, formalitate, număr de invitați).", description: "Discutați despre cum vă imaginați ziua nunții: elegantă, rustică, restrânsă, etc." },
-      { name: "Alegeți o dată aproximativă pentru nuntă.", description: "Luați în considerare anotimpul, disponibilitatea persoanelor cheie și eventualele sărbători." }
-    ],
-    "Buget": [
-      { name: "Stabiliți bugetul total al nunții.", description: "Analizați finanțele și decideți o sumă totală realistă pe care sunteți dispuși să o cheltuiți." },
-      { name: "Creați o foaie de calcul pentru a urmări cheltuielile.", description: "Folosiți secțiunea Buget a aplicației pentru a ține evidența fiecărui cost." },
-      { name: "Decideți cine contribuie financiar și cu ce sume.", description: "Discuție deschisă cu părinții sau alte persoane implicate, dacă este cazul." }
-    ],
-    "Invitați": [
-      { name: "Creați o listă preliminară de invitați.", description: "Faceți o listă inițială cu toți cei pe care ați dori să-i aveți alături." }
-    ],
-    "Echipa de Nuntă": [
-      { name: "Alegeți nașii.", description: "Selectați persoanele care vă vor fi alături și vă vor ghida în acest proces." },
-      { name: "Alegeți domnișoarele și cavalerii de onoare.", description: "Invitați prietenii apropiați să facă parte din alaiul vostru." }
-    ]
-  },
-  "10-12 Luni": {
-    "Locație & Biserică": [
-      { name: "Vizitați și rezervați locația pentru recepție.", description: "Asigurați-vă că semnați un contract clar care specifică toate detaliile." },
-      { name: "Rezervați biserica pentru ceremonia religioasă.", description: "Discutați cu preotul și stabiliți data și ora exactă." }
-    ],
-    "Furnizori Cheie": [
-      { name: "Angajați un wedding planner (opțional).", description: "Dacă bugetul permite, un planner vă poate economisi timp și stres." },
-      { name: "Rezervați fotograful și videograful.", description: "Analizați portofolii și alegeți stilul care vi se potrivește. Semnați contracte." },
-      { name: "Rezervați formația sau DJ-ul.", description: "Asigurați-vă că ați ascultat câteva mostre și că repertoriul corespunde preferințelor voastre." }
-    ]
-  },
-  "8-10 Luni": {
-    "Ținute & Verighete": [
-      { name: "Începeți căutarea rochiei de mireasă.", description: "Probați diverse stiluri pentru a vedea ce vi se potrivește cel mai bine." },
-      { name: "Alegeți și comandați verighetele.", description: "Luați în considerare gravarea acestora cu un mesaj personal." }
-    ],
-    "Invitați & Save the Date": [
-      { name: "Trimiteți cardurile “Save the Date” (opțional).", description: "Este un gest util, în special pentru invitații care vin din alte localități." }
-    ]
-  },
-  "6-8 Luni": {
-    "Furnizori Secundari": [
-      { name: "Rezervați floristul și decoratorul.", description: "Discutați despre tema nunții, culori și aranjamentele florale dorite." },
-      { name: "Contactați firme de catering (dacă locația nu oferă).", description: "Stabiliți meniuri de degustare." }
-    ],
-    "Planificare Lună de Miere": [
-      { name: "Planificați și rezervați luna de miere.", description: "Profitați de oferte și asigurați-vă că aveți toate documentele de călătorie în regulă." }
-    ]
-  },
-  "4-6 Luni": {
-    "Ținute & Accesorii": [
-      { name: "Comandați rochia de mireasă și costumul de mire.", description: "Asigurați-vă că ați luat în calcul timpul necesar pentru ajustări." },
-      { name: "Alegeți ținutele pentru domnișoarele de onoare.", description: "Coordonați stilul și culorile cu tema generală a nunții." }
-    ],
-    "Detalii Eveniment": [
-      { name: "Stabiliți meniul final și faceți degustarea.", description: "Alegeți preparatele finale împreună cu reprezentantul locației sau al firmei de catering." },
-      { name: "Comandați tortul de nuntă și candy bar-ul.", description: "Faceți o degustare pentru a alege aromele preferate." },
-      { name: "Înscrieți-vă la cursuri de dans (opțional).", description: "Pregătiți dansul mirilor pentru a impresiona invitații." }
-    ]
-  },
-  "3-4 Luni": {
-    "Invitații & Papetărie": [
-      { name: "Finalizați lista de invitați.", description: "Treceți prin lista preliminară și stabiliți versiunea finală." },
-      { name: "Comandați invitațiile și restul papetăriei (meniuri, place carduri).", description: "Verificați textul cu atenție înainte de a trimite la tipar." }
-    ],
-    "Logistică": [
-      { name: "Rezervați transport pentru voi și pentru invitați (dacă este cazul).", description: "Luați în considerare o mașină de epocă, o limuzină sau un microbuz pentru invitați." }
-    ]
-  },
-  "2 Luni": {
-    "Documente & Legal": [
-      { name: "Verificați valabilitatea actelor de identitate.", description: "Asigurați-vă că nu expiră în preajma nunții." },
-      { name: "Interesați-vă de actele necesare pentru cununia civilă.", description: "Faceți o listă cu tot ce trebuie pregătit: certificate de naștere, etc." }
-    ],
-    "Detalii Finale": [
-      { name: "Trimiteți invitațiile.", description: "Ideal, cu 6-8 săptămâni înainte de eveniment." },
-      { name: "Cumpărați toate accesoriile pentru ținute.", description: "Pantofi, bijuterii, voal, butoni, etc." },
-      { name: "Faceți programare pentru probele de coafură și machiaj.", description: "Mergeți cu poze de inspirație pentru a obține look-ul dorit." }
-    ]
-  },
-  "1 Lună": {
-    "Confirmări & Plăți": [
-      { name: "Contactați invitații care nu au răspuns la invitație.", description: "Sunați pentru a obține un număr cât mai exact de participanți." },
-      { name: "Stabiliți o întâlnire finală cu fotograful/videograful.", description: "Discutați despre momentele cheie pe care doriți să le surprindă." },
-      { name: "Stabiliți playlist-ul final cu DJ-ul/formația.", description: "Includeți melodiile preferate și menționați ce stiluri muzicale doriți să predomine." }
-    ],
-    "Legal": [
-      { name: "Aplicați pentru certificatul prenupțial.", description: "Acesta este necesar pentru cununia civilă și are o valabilitate limitată." }
-    ]
-  },
-  "1-2 Săptămâni": {
-    "Finalizarea Detaliilor": [
-      { name: "Comunicați numărul final de invitați la restaurant.", description: "Acesta este momentul în care stabiliți numărul final de meniuri." },
-      { name: "Realizați planul final al meselor (seating chart).", description: "Folosiți secțiunea 'Aranjare Mese' din aplicație pentru a organiza totul vizual." },
-      { name: "Confirmați toate detaliile cu furnizorii.", description: "Ora sosirii, programul, plățile finale etc." },
-      { name: "Faceți proba finală pentru rochia de mireasă și costumul de mire.", description: "Asigurați-vă că totul se potrivește perfect." }
-    ],
-    "Pregătiri Personale": [
-      { name: "Pregătiți plicurile cu banii pentru furnizori.", description: "Organizați plățile pentru a le avea la îndemână în ziua nunții." },
-      { name: "Faceți bagajul pentru luna de miere.", description: "Nu lăsați pe ultima sută de metri." }
-    ]
-  },
-  "Ziua de Dinaintea Nunții": {
-    "Relaxare & Verificare": [
-      { name: "Mergeți la salon pentru manichiură și pedichiură.", description: "Un moment de răsfăț bine meritat." },
-      { name: "Verificați dacă toate ținutele și accesoriile sunt pregătite.", description: "Puneți totul deoparte pentru a evita stresul de dimineață." },
-      { name: "Delegați sarcini de ultim moment nașilor sau prietenilor.", description: "Nu încercați să faceți totul singuri." },
-      { name: "Relaxați-vă și odihniți-vă!", description: "Încercați să aveți o seară liniștită și să dormiți bine." }
-    ]
-  }
+    "12+ Luni Înainte": {
+        "Planificare Inițială": [
+            { name: "Anunță logodna", description: "Împărtășește vestea bună cu familia și prietenii apropiați." },
+            { name: "Stabilește viziunea nunții", description: "Discută despre stilul nunții: formal, casual, tematic etc." },
+            { name: "Alege o perioadă a anului", description: "Decide anotimpul sau luna preferată pentru nuntă." }
+        ],
+        "Buget": [
+            { name: "Stabilește bugetul total", description: "Discută cu partenerul și familia pentru a stabili un buget realist." },
+            { name: "Creează un sistem de urmărire", description: "Folosește un spreadsheet sau o aplicație pentru a monitoriza cheltuielile." },
+            { name: "Stabilește sursele de finanțare", description: "Clarifică cine contribuie și cu ce sumă." }
+        ],
+        "Invitați": [
+            { name: "Creează lista preliminară de invitați", description: "Notează pe toți cei pe care doriți să-i invitați." },
+            { name: "Adună adresele invitaților", description: "Creează un fișier centralizat cu datele de contact." }
+        ],
+        "Echipa de Nuntă": [
+            { name: "Alege cavalerii și domnișoarele de onoare", description: "Gândește-te la persoanele cele mai apropiate." },
+            { name: "Alege nașii", description: "Discută cu persoanele pe care le dorești ca părinți spirituali." }
+        ]
+    },
+    "10-12 Luni": {
+        "Locație & Biserică": [
+            { name: "Vizitează și rezervă locația", description: "Asigură-te că locația corespunde viziunii și bugetului." },
+            { name: "Rezervă biserica/locația ceremoniei", description: "Confirmă data și ora cu preotul sau oficiantul." }
+        ],
+        "Furnizori Cheie": [
+            { name: "Angajează un wedding planner", description: "Dacă dorești ajutor specializat, acum este momentul." },
+            { name: "Rezervă fotograful și videograful", description: "Cei mai buni sunt rezervați cu mult timp în avans." },
+            { name: "Rezervă formația sau DJ-ul", description: "Muzica este esențială pentru atmosfera petrecerii." }
+        ]
+    },
+    "8-10 Luni": {
+        "Ținute & Verighete": [
+            { name: "Începe căutarea rochiei de mireasă", description: "Probează diverse stiluri pentru a găsi rochia perfectă." },
+            { name: "Comandă rochia de mireasă", description: "Livrarea și ajustările pot dura câteva luni." },
+            { name: "Alege și comandă verighetele", description: "Asigură-te că ai măsurile corecte." }
+        ],
+        "Invitați & Save the Date": [
+            { name: "Trimite 'Save the Date'", description: "Este important mai ales pentru invitații din afara localității." },
+            { name: "Creează un website pentru nuntă", description: "Opțional, pentru a oferi detalii suplimentare." }
+        ]
+    },
+    "6-8 Luni": {
+        "Furnizori Secundari": [
+            { name: "Rezervă florăria", description: "Discută despre buchete, aranjamente florale și decorațiuni." },
+            { name: "Rezervă cofetăria pentru tort", description: "Programează o degustare pentru a alege aromele." },
+            { name: "Stabilește meniul cu firma de catering", description: "Confirmă meniul final și numărul de porții." }
+        ],
+        "Planificare Lună de Miere": [
+            { name: "Alege destinația pentru luna de miere", description: "Visează la locația perfectă pentru relaxare." },
+            { name: "Rezervă zborurile și cazarea", description: "Profită de oferte și rezervă din timp." }
+        ]
+    },
+    "4-6 Luni": {
+        "Ținute & Accesorii": [
+            { name: "Alege ținutele pentru domnișoarele de onoare", description: "Coordonează stilul și culorile." },
+            { name: "Alege costumul pentru mire", description: "Asigură-te că se potrivește cu stilul nunții." },
+            { name: "Cumpără pantofii și accesoriile", description: "Alege accesorii care completează ținutele." }
+        ],
+        "Detalii Eveniment": [
+            { name: "Planifică degustarea meniului", description: "Confirmă alegerile culinare cu locația/cateringul." },
+            { name: "Alege mărturiile pentru invitați", description: "Găsește un mic cadou simbolic pentru participanți." }
+        ]
+    },
+    "3-4 Luni": {
+        "Invitații & Papetărie": [
+            { name: "Comandă invitațiile de nuntă", description: "Verifică textul și designul cu atenție." },
+            { name: "Trimite invitațiile", description: "Respectă termenul clasic de 2-3 luni înainte de eveniment." }
+        ],
+        "Logistică": [
+            { name: "Planifică cazarea pentru invitați", description: "Dacă ai invitați din alte orașe, oferă-le opțiuni de cazare." }
+        ]
+    },
+    "2 Luni": {
+        "Documente & Legal": [
+            { name: "Aplică pentru certificatul de căsătorie", description: "Verifică valabilitatea actelor și termenul legal." },
+            { name: "Adună toate documentele necesare", description: "Pregătește dosarul pentru cununia civilă și religioasă." }
+        ],
+        "Detalii Finale": [
+            { name: "Programează proba pentru coafură și machiaj", description: "Asigură-te că look-ul final este cel dorit." },
+            { name: "Stabilește playlist-ul cu DJ-ul/formația", description: "Include melodiile preferate și momentele cheie." }
+        ]
+    },
+    "1 Lună": {
+        "Confirmări & Plăți": [
+            { name: "Confirmă numărul final de invitați", description: "Contactează invitații care nu au răspuns." },
+            { name: "Confirmă detaliile finale cu toți furnizorii", description: "Verifică orele, locațiile și serviciile contractate." },
+            { name: "Efectuează plățile finale", description: "Asigură-te că ai achitat toate avansurile și tranșele finale." }
+        ],
+        "Legal": [
+            { name: "Depune actele la starea civilă", description: "Respectă termenul legal pentru depunerea dosarului." }
+        ]
+    },
+    "1-2 Săptămâni": {
+        "Finalizarea Detaliilor": [
+            { name: "Creează planul final al aranjării la mese", description: "Folosește secțiunea 'Aranjare Mese' din aplicație." },
+            { name: "Creează un program detaliat pentru ziua nunții", description: "Distribuie programul echipei de nuntă și furnizorilor." }
+        ],
+        "Pregătiri Personale": [
+            { name: "Mergi la proba finală pentru rochie/costum", description: "Asigură-te că totul se potrivește perfect." },
+            { name: "Pregătește bagajul pentru luna de miere", description: "Nu lăsa pe ultima sută de metri." }
+        ]
+    },
+    "Ziua de Dinaintea Nunții": {
+        "Relaxare & Verificare": [
+            { name: "Predă elementele necesare la locație", description: "Mărturii, place card-uri, carte de oaspeți etc." },
+            { name: "Fă o manichiură/pedichiură relaxantă", description: "Răsfață-te puțin înainte de ziua cea mare." },
+            { name: "Odihnește-te bine!", description: "Un somn bun este esențial." }
+        ]
+    }
 };
 
-// --- COMPONENTS ---
+
+// --- COMPONENTE ---
+
+const TrialInfoBanner = ({ daysLeft, onUpgrade }) => {
+    if (daysLeft <= 0) return null;
+
+    return (
+        <div className="bg-gradient-to-r from-yellow-400 to-orange-400 text-white text-center p-3 rounded-lg shadow-md my-4 container mx-auto flex items-center justify-center gap-4">
+            <Star className="text-white flex-shrink-0" size={24} />
+            <p className="font-semibold">
+                Perioada de probă este activă! Mai ai {daysLeft} {daysLeft === 1 ? 'zi' : 'zile'} de acces Premium gratuit.
+            </p>
+            <button onClick={onUpgrade} className="bg-white text-yellow-800 font-bold py-1 px-4 rounded-full text-sm hover:bg-yellow-100 transition-colors flex-shrink-0">
+                Activează Acum
+            </button>
+        </div>
+    );
+};
+
+const TrialExpiredScreen = ({ onUpgrade }) => (
+    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+        <div className="w-full max-w-lg p-8 space-y-8 bg-white rounded-xl shadow-2xl text-center">
+            <Star className="mx-auto h-16 w-16 text-yellow-400" />
+            <h2 className="mt-6 text-3xl font-bold text-gray-900">Perioada de probă a expirat!</h2>
+            <p className="mt-2 text-gray-600">
+                Mulțumim că ai încercat Planificatorul de Nuntă. Pentru a continua să folosești aplicația și a-ți accesa datele, te rugăm să activezi un cont Premium.
+            </p>
+            <div className="mt-6">
+                <p className="text-3xl font-extrabold text-gray-900">Doar 99 lei (aprox. 20€)</p>
+                <p className="text-sm text-gray-500">Plată unică, acces pe viață.</p>
+            </div>
+            <button
+                onClick={onUpgrade}
+                className="mt-6 w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-lg shadow-lg text-lg transition-transform transform hover:scale-105"
+            >
+                Activează Premium Acum
+            </button>
+        </div>
+    </div>
+);
 
 const Dashboard = ({ userId, weddingDate, stats, onSettingsClick }) => {
     const [countdown, setCountdown] = useState({});
@@ -222,47 +262,154 @@ const Dashboard = ({ userId, weddingDate, stats, onSettingsClick }) => {
 };
 
 const GuestList = ({ userId, showAlert, showConfirm }) => {
-  const [guests, setGuests] = useState([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [currentGuest, setCurrentGuest] = useState(null);
-  const [newGuestName, setNewGuestName] = useState('');
-  const [newGuestRsvp, setNewGuestRsvp] = useState('Așteaptă');
-  const [newGuestNotes, setNewGuestNotes] = useState('');
-  const [searchTerm, setSearchTerm] = useState('');
-  const guestsCollectionPath = `artifacts/${appId}/users/${userId}/guests`;
-  useEffect(() => { if (!userId) return; const q = query(collection(db, guestsCollectionPath)); const unsubscribe = onSnapshot(q, (snap) => setGuests(snap.docs.map(doc => ({ id: doc.id, ...doc.data() }))), (error) => showAlert(`Eroare invitați: ${error.message}`, "Eroare")); return () => unsubscribe(); }, [userId, showAlert]);
-  const handleAddOrUpdateGuest = async () => { if (!newGuestName.trim()) { showAlert("Numele este obligatoriu.", "Eroare"); return; } const guestData = { name: newGuestName, rsvp: newGuestRsvp, notes: newGuestNotes }; try { if (currentGuest) { await updateDoc(doc(db, guestsCollectionPath, currentGuest.id), guestData); } else { await addDoc(collection(db, guestsCollectionPath), guestData); } closeModal(); } catch (error) { showAlert(`Eroare salvare: ${error.message}`, "Eroare"); } };
-  const handleDeleteGuest = (guestId) => { showConfirm("Sigur ștergi acest invitat?", "Confirmare", async () => { try { await deleteDoc(doc(db, guestsCollectionPath, guestId)); } catch (error) { showAlert(`Eroare ștergere: ${error.message}`, "Eroare"); } }); };
-  const openModal = (guest = null) => { setCurrentGuest(guest); setNewGuestName(guest?.name || ''); setNewGuestRsvp(guest?.rsvp || 'Așteaptă'); setNewGuestNotes(guest?.notes || ''); setIsModalOpen(true); };
-  const closeModal = () => { setIsModalOpen(false); setCurrentGuest(null); };
-  const filteredGuests = guests.filter(g => g.name.toLowerCase().includes(searchTerm.toLowerCase()));
-  const RsvpIcon = ({ status }) => {
-    switch (status) {
-        case 'Confirmat': return <CheckCircle className="text-green-500" size={20} />;
-        case 'Refuzat': return <XCircle className="text-red-500" size={20} />;
-        case 'Poate': return <MailQuestion className="text-blue-500" size={20} />;
-        case 'Așteaptă': default: return <HelpCircle className="text-yellow-500" size={20} />;
-    }
-  };
-  return (
-    <div className="p-6 bg-pink-50 rounded-lg shadow-md">
-      <div className="flex justify-between items-center mb-6"><h2 className="text-2xl font-semibold text-pink-700">Listă Invitați</h2><button onClick={() => openModal()} className="bg-pink-500 hover:bg-pink-600 text-white font-semibold py-2 px-4 rounded-lg shadow flex items-center transition"><PlusCircle size={20} className="mr-2" /> Adaugă Invitat</button></div>
-      <input type="text" placeholder="Caută invitat..." className="w-full p-2 mb-4 border border-pink-300 rounded-lg focus:ring-pink-500 focus:border-pink-500" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
-      {filteredGuests.length === 0 && <p className="text-gray-600">Niciun invitat găsit.</p>}
-      <div className="space-y-4">{filteredGuests.map(guest => ( <div key={guest.id} className="bg-white p-4 rounded-lg shadow-sm border border-pink-200 flex justify-between items-start"><div><h3 className="text-lg font-medium text-pink-800">{guest.name}</h3><div className="flex items-center mt-1"><RsvpIcon status={guest.rsvp} /><p className="text-sm ml-2">{guest.rsvp}</p></div>{guest.notes && <p className="text-xs text-gray-500 mt-2 italic">Notițe: {guest.notes}</p>}</div><div className="flex space-x-2"><button onClick={() => openModal(guest)} className="text-blue-500 hover:text-blue-700 p-1"><Edit2 size={18} /></button><button onClick={() => handleDeleteGuest(guest.id)} className="text-red-500 hover:text-red-700 p-1"><Trash2 size={18} /></button></div></div> ))}</div>
-      <Modal isOpen={isModalOpen} onClose={closeModal} title={currentGuest ? "Modifică Invitat" : "Adaugă Invitat Nou"}>
-          <div className="space-y-4">
-              <div><label htmlFor="guestName" className="block text-sm font-medium text-gray-700">Nume Invitat:</label><input type="text" id="guestName" value={newGuestName} onChange={(e) => setNewGuestName(e.target.value)} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500 sm:text-sm" placeholder="Ex: Popescu Ion și Maria" /></div>
-              <div><label htmlFor="guestRsvp" className="block text-sm font-medium text-gray-700">Status RSVP:</label><select id="guestRsvp" value={newGuestRsvp} onChange={(e) => setNewGuestRsvp(e.target.value)} className="mt-1 block w-full px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500 sm:text-sm"><option value="Așteaptă">Așteaptă</option><option value="Confirmat">Confirmat</option><option value="Refuzat">Refuzat</option><option value="Poate">Poate</option></select></div>
-              <div><label htmlFor="guestNotes" className="block text-sm font-medium text-gray-700">Notițe (opțional):</label><textarea id="guestNotes" value={newGuestNotes} onChange={(e) => setNewGuestNotes(e.target.value)} rows="3" className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500 sm:text-sm" placeholder="Ex: Alergie la nuci, preferințe meniu, etc."></textarea></div>
-              <div className="flex justify-end space-x-3"><button onClick={closeModal} className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-md shadow-sm">Anulează</button><button onClick={handleAddOrUpdateGuest} className="px-4 py-2 text-sm font-medium text-white bg-pink-500 hover:bg-pink-600 rounded-md shadow-sm flex items-center"><Save size={16} className="mr-2" /> Salvează</button></div>
-          </div>
-      </Modal>
-    </div>
-  );
+    const [guests, setGuests] = useState([]);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [currentGuest, setCurrentGuest] = useState(null);
+    const [newGuestName, setNewGuestName] = useState('');
+    const [newGuestRsvp, setNewGuestRsvp] = useState('Așteaptă');
+    const [newGuestNotes, setNewGuestNotes] = useState('');
+    const [searchTerm, setSearchTerm] = useState('');
+    const [filterStatus, setFilterStatus] = useState('All'); // 'All', 'Așteaptă', 'Confirmat', 'Refuzat', 'Poate'
+    const guestsCollectionPath = `artifacts/${appId}/users/${userId}/guests`;
+
+    useEffect(() => {
+        if (!userId) return;
+        const q = query(collection(db, guestsCollectionPath));
+        const unsubscribe = onSnapshot(q, (snap) => {
+            setGuests(snap.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+        }, (error) => showAlert(`Eroare la citirea invitaților: ${error.message}`, "Eroare"));
+        return () => unsubscribe();
+    }, [userId, showAlert]);
+
+    const handleAddOrUpdateGuest = async () => {
+        if (!newGuestName.trim()) {
+            showAlert("Numele este obligatoriu.", "Eroare");
+            return;
+        }
+        const guestData = { name: newGuestName, rsvp: newGuestRsvp, notes: newGuestNotes };
+        try {
+            if (currentGuest) {
+                await updateDoc(doc(db, guestsCollectionPath, currentGuest.id), guestData);
+            } else {
+                await addDoc(collection(db, guestsCollectionPath), guestData);
+            }
+            closeModal();
+        } catch (error) {
+            showAlert(`Eroare la salvarea invitatului: ${error.message}`, "Eroare");
+        }
+    };
+
+    const handleDeleteGuest = (guestId) => {
+        showConfirm("Sigur dorești să ștergi acest invitat?", "Confirmare Ștergere", async () => {
+            try {
+                await deleteDoc(doc(db, guestsCollectionPath, guestId));
+            } catch (error) {
+                showAlert(`Eroare la ștergerea invitatului: ${error.message}`, "Eroare");
+            }
+        });
+    };
+
+    const openModal = (guest = null) => {
+        setCurrentGuest(guest);
+        setNewGuestName(guest?.name || '');
+        setNewGuestRsvp(guest?.rsvp || 'Așteaptă');
+        setNewGuestNotes(guest?.notes || '');
+        setIsModalOpen(true);
+    };
+
+    const closeModal = () => {
+        setIsModalOpen(false);
+        setCurrentGuest(null);
+    };
+    
+    const filteredGuests = guests.filter(g => {
+        const nameMatch = g.name.toLowerCase().includes(searchTerm.toLowerCase());
+        const statusMatch = filterStatus === 'All' || g.rsvp === filterStatus;
+        return nameMatch && statusMatch;
+    });
+
+    const RsvpIcon = ({ status }) => {
+        switch (status) {
+            case 'Confirmat': return <CheckCircle className="text-green-500" size={20} />;
+            case 'Refuzat': return <XCircle className="text-red-500" size={20} />;
+            case 'Poate': return <MailQuestion className="text-blue-500" size={20} />;
+            case 'Așteaptă': default: return <HelpCircle className="text-yellow-500" size={20} />;
+        }
+    };
+
+    const FilterButton = ({ status, label, count }) => (
+        <button
+            onClick={() => setFilterStatus(status)}
+            className={`px-3 py-1.5 text-sm font-medium rounded-full flex items-center gap-2 transition-all duration-200 ease-in-out border ${
+                filterStatus === status
+                    ? 'bg-pink-600 text-white border-pink-700 shadow-md'
+                    : 'bg-white text-pink-700 border-pink-200 hover:bg-pink-100 hover:border-pink-300'
+            }`}
+        >
+            {label}
+            <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${
+                filterStatus === status ? 'bg-white text-pink-600' : 'bg-pink-200 text-pink-700'
+            }`}>
+                {count}
+            </span>
+        </button>
+    );
+
+    return (
+        <div className="p-6 bg-pink-50 rounded-lg shadow-md">
+            <div className="flex justify-between items-center mb-6">
+                <h2 className="text-2xl font-semibold text-pink-700">Listă Invitați</h2>
+                <button onClick={() => openModal()} className="bg-pink-500 hover:bg-pink-600 text-white font-semibold py-2 px-4 rounded-lg shadow flex items-center transition">
+                    <PlusCircle size={20} className="mr-2" /> Adaugă Invitat
+                </button>
+            </div>
+            
+            <input type="text" placeholder="Caută invitat după nume..." className="w-full p-2 mb-4 border border-pink-300 rounded-lg focus:ring-pink-500 focus:border-pink-500" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+
+            <div className="flex flex-wrap gap-2 mb-6 pb-4 border-b border-pink-200">
+                <FilterButton status="All" label="Toți" count={guests.length} />
+                <FilterButton status="Confirmat" label="Confirmați" count={guests.filter(g => g.rsvp === 'Confirmat').length} />
+                <FilterButton status="Așteaptă" label="Așteaptă" count={guests.filter(g => g.rsvp === 'Așteaptă').length} />
+                <FilterButton status="Refuzat" label="Refuzați" count={guests.filter(g => g.rsvp === 'Refuzat').length} />
+                <FilterButton status="Poate" label="Poate" count={guests.filter(g => g.rsvp === 'Poate').length} />
+            </div>
+
+            {filteredGuests.length === 0 && <p className="text-center text-gray-600 py-8">Niciun invitat nu corespunde filtrelor selectate.</p>}
+            
+            <div className="space-y-4">
+                {filteredGuests.map(guest => (
+                    <div key={guest.id} className="bg-white p-4 rounded-lg shadow-sm border border-pink-200 flex justify-between items-start">
+                        <div>
+                            <h3 className="text-lg font-medium text-pink-800">{guest.name}</h3>
+                            <div className="flex items-center mt-1">
+                                <RsvpIcon status={guest.rsvp} />
+                                <p className="text-sm ml-2">{guest.rsvp}</p>
+                            </div>
+                            {guest.notes && <p className="text-xs text-gray-500 mt-2 italic">Notițe: {guest.notes}</p>}
+                        </div>
+                        <div className="flex space-x-2">
+                            <button onClick={() => openModal(guest)} className="text-blue-500 hover:text-blue-700 p-1"><Edit2 size={18} /></button>
+                            <button onClick={() => handleDeleteGuest(guest.id)} className="text-red-500 hover:text-red-700 p-1"><Trash2 size={18} /></button>
+                        </div>
+                    </div>
+                ))}
+            </div>
+            
+            <Modal isOpen={isModalOpen} onClose={closeModal} title={currentGuest ? "Modifică Invitat" : "Adaugă Invitat Nou"}>
+                <div className="space-y-4">
+                    <div><label htmlFor="guestName" className="block text-sm font-medium text-gray-700">Nume Invitat:</label><input type="text" id="guestName" value={newGuestName} onChange={(e) => setNewGuestName(e.target.value)} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500 sm:text-sm" placeholder="Ex: Popescu Ion și Maria" /></div>
+                    <div><label htmlFor="guestRsvp" className="block text-sm font-medium text-gray-700">Status RSVP:</label><select id="guestRsvp" value={newGuestRsvp} onChange={(e) => setNewGuestRsvp(e.target.value)} className="mt-1 block w-full px-3 py-2 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500 sm:text-sm"><option value="Așteaptă">Așteaptă</option><option value="Confirmat">Confirmat</option><option value="Refuzat">Refuzat</option><option value="Poate">Poate</option></select></div>
+                    <div><label htmlFor="guestNotes" className="block text-sm font-medium text-gray-700">Notițe (opțional):</label><textarea id="guestNotes" value={newGuestNotes} onChange={(e) => setNewGuestNotes(e.target.value)} rows="3" className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500 sm:text-sm" placeholder="Ex: Alergie la nuci, preferințe meniu, etc."></textarea></div>
+                    <div className="flex justify-end space-x-3"><button onClick={closeModal} className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-md shadow-sm">Anulează</button><button onClick={handleAddOrUpdateGuest} className="px-4 py-2 text-sm font-medium text-white bg-pink-500 hover:bg-pink-600 rounded-md shadow-sm flex items-center"><Save size={16} className="mr-2" /> Salvează</button></div>
+                </div>
+            </Modal>
+        </div>
+    );
 };
 
-const Budget = ({ userId, showAlert, showConfirm }) => {
+
+// --- COMPONENTA PRINCIPALĂ PENTRU BUGET (VERSIUNE NOUĂ) ---
+const Budget = ({ db, userId, appId, showAlert, showConfirm }) => {
     const [items, setItems] = useState([]);
     const [isItemModalOpen, setIsItemModalOpen] = useState(false);
     const [currentItem, setCurrentItem] = useState(null);
@@ -280,14 +427,13 @@ const Budget = ({ userId, showAlert, showConfirm }) => {
     const settingsDocPath = `artifacts/${appId}/users/${userId}/settings`;
     const categories = ['Locație', 'Mâncare & Băutură', 'Fotograf/Videograf', 'Muzică/DJ', 'Ținute', 'Decorațiuni', 'Invitații', 'Verighete', 'Transport', 'Diverse'];
     
-    // UPDATED: Transport now has a percentage
     const budgetAllocation = {
         'Locație': 0.24, 'Mâncare & Băutură': 0.24, 'Fotograf/Videograf': 0.10, 'Muzică/DJ': 0.08,
         'Ținute': 0.12, 'Decorațiuni': 0.07, 'Invitații': 0.03, 'Verighete': 0.03, 'Transport': 0.02, 'Diverse': 0.07,
     };
 
     useEffect(() => {
-        if (!userId) return;
+        if (!userId || !db) return;
         const settingsDocRef = doc(db, settingsDocPath, 'main');
         const unsubSettings = onSnapshot(settingsDocRef, (doc) => {
             if (doc.exists() && doc.data().totalBudget) {
@@ -296,9 +442,14 @@ const Budget = ({ userId, showAlert, showConfirm }) => {
                 setTempTotalBudget(budget.toString());
             }
         });
-        const unsubItems = onSnapshot(query(collection(db, budgetCollectionPath)), (snap) => setItems(snap.docs.map(d => ({id: d.id, ...d.data()}))), (err) => showAlert(`Eroare buget: ${err.message}`, "Eroare"));
-        return () => { unsubSettings(); unsubItems(); };
-    }, [userId, showAlert]);
+        const q = query(collection(db, budgetCollectionPath));
+        const unsubItems = onSnapshot(q, (snap) => setItems(snap.docs.map(d => ({id: d.id, ...d.data()}))), (err) => showAlert(`Eroare la citirea bugetului: ${err.message}`, "Eroare"));
+        
+        return () => { 
+            unsubSettings(); 
+            unsubItems(); 
+        };
+    }, [userId, db, settingsDocPath, budgetCollectionPath, showAlert]);
 
     const handleSaveTotalBudget = async () => {
         const newTotal = parseFloat(tempTotalBudget);
@@ -315,7 +466,6 @@ const Budget = ({ userId, showAlert, showConfirm }) => {
             return;
         }
 
-        // CORRECTED LOGIC
         const estCost = parseFloat(estimatedCost) || 0;
         let actCost;
 
@@ -341,14 +491,42 @@ const Budget = ({ userId, showAlert, showConfirm }) => {
             }
             closeItemModal();
         } catch (err) {
-            showAlert(`Eroare salvare: ${err.message}`, "Eroare");
+            showAlert(`Eroare la salvarea cheltuielii: ${err.message}`, "Eroare");
         }
     };
 
-    const handleDeleteItem = (itemId) => { showConfirm("Sigur ștergi această cheltuială?", "Confirmare", async () => { try { await deleteDoc(doc(db, budgetCollectionPath, itemId)); } catch (err) { showAlert(`Eroare ștergere: ${err.message}`, "Eroare"); } }); };
-    const togglePaidStatus = async (item) => { try { await updateDoc(doc(db, budgetCollectionPath, item.id), { paid: !item.paid }); } catch (err) { showAlert(`Eroare actualizare: ${err.message}`, "Eroare"); } };
-    const openItemModal = (item = null) => { setCurrentItem(item); setItemName(item?.name || ''); setCategory(item?.category || 'Locație'); setEstimatedCost(item?.estimatedCost?.toString() || ''); setActualCost(item?.actualCost?.toString() || ''); setIsPaid(item?.paid || false); setIsItemModalOpen(true); };
-    const closeItemModal = () => { setIsItemModalOpen(false); setCurrentItem(null); };
+    const handleDeleteItem = (itemId) => { 
+        showConfirm("Sigur dorești să ștergi această cheltuială?", "Confirmare Ștergere", async () => { 
+            try { 
+                await deleteDoc(doc(db, budgetCollectionPath, itemId)); 
+            } catch (err) { 
+                showAlert(`Eroare la ștergere: ${err.message}`, "Eroare"); 
+            } 
+        }); 
+    };
+    
+    const togglePaidStatus = async (item) => { 
+        try { 
+            await updateDoc(doc(db, budgetCollectionPath, item.id), { paid: !item.paid }); 
+        } catch (err) { 
+            showAlert(`Eroare la actualizare: ${err.message}`, "Eroare"); 
+        } 
+    };
+    
+    const openItemModal = (item = null) => { 
+        setCurrentItem(item); 
+        setItemName(item?.name || ''); 
+        setCategory(item?.category || 'Locație'); 
+        setEstimatedCost(item?.estimatedCost?.toString() || ''); 
+        setActualCost(item?.actualCost?.toString() || ''); 
+        setIsPaid(item?.paid || false); 
+        setIsItemModalOpen(true); 
+    };
+    
+    const closeItemModal = () => { 
+        setIsItemModalOpen(false); 
+        setCurrentItem(null); 
+    };
     
     const spentPerCategory = items.reduce((acc, item) => {
         const cost = Number(item.actualCost) || 0;
@@ -365,34 +543,32 @@ const Budget = ({ userId, showAlert, showConfirm }) => {
         <div className="p-6 bg-green-50 rounded-lg shadow-md space-y-8">
             {/* Planner Section */}
             <div className="p-6 bg-white rounded-lg shadow">
-                <div>
-                    <div className="flex justify-between items-center mb-4">
-                        <h3 className="text-xl font-semibold text-green-800">Planificator Buget</h3>
-                        <button onClick={() => setIsBudgetModalOpen(true)} className="bg-green-200 text-green-800 hover:bg-green-300 font-semibold py-2 px-4 rounded-lg text-sm">Setează Bugetul Total</button>
-                    </div>
-                    {totalBudget > 0 ? (
-                        <div>
-                            <p className="text-center text-gray-600 mb-4">Buget total propus: <span className="font-bold text-lg">{totalBudget.toFixed(0)} RON</span></p>
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                                {Object.entries(budgetAllocation).map(([category, percentage]) => {
-                                    const suggested = totalBudget * percentage;
-                                    const spent = spentPerCategory[category] || 0;
-                                    const difference = suggested - spent;
-                                    const progress = suggested > 0 ? (spent / suggested) * 100 : 0;
-                                    return (
-                                        <div key={category} className="p-4 border rounded-lg bg-gray-50">
-                                            <h4 className="font-bold text-gray-700">{category}</h4>
-                                            <p className="text-xs text-gray-500">Sugerăm: {suggested.toFixed(0)} RON ({(percentage * 100).toFixed(0)}%)</p>
-                                            <p className="text-sm font-semibold">Cheltuit: {spent.toFixed(0)} RON</p>
-                                            <div className="w-full bg-gray-200 rounded-full h-2.5 my-2"><div className={`h-2.5 rounded-full ${progress > 100 ? 'bg-red-500' : 'bg-green-500'}`} style={{ width: `${Math.min(progress, 100)}%` }}></div></div>
-                                            <p className={`text-xs font-medium ${difference >= 0 ? 'text-green-600' : 'text-red-600'}`}>{difference >= 0 ? `Rămas: ${difference.toFixed(0)} RON` : `Depășit: ${Math.abs(difference).toFixed(0)} RON`}</p>
-                                        </div>
-                                    );
-                                })}
-                            </div>
-                        </div>
-                    ) : (<p className="text-center text-gray-500">Setați un buget total pentru a vedea sugestiile de alocare a cheltuielilor.</p>)}
+                <div className="flex justify-between items-center mb-4">
+                    <h3 className="text-xl font-semibold text-green-800">Planificator Buget</h3>
+                    <button onClick={() => setIsBudgetModalOpen(true)} className="bg-green-200 text-green-800 hover:bg-green-300 font-semibold py-2 px-4 rounded-lg text-sm">Setează Bugetul Total</button>
                 </div>
+                {totalBudget > 0 ? (
+                    <div>
+                        <p className="text-center text-gray-600 mb-4">Buget total propus: <span className="font-bold text-lg">{totalBudget.toFixed(0)} RON</span></p>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            {Object.entries(budgetAllocation).map(([category, percentage]) => {
+                                const suggested = totalBudget * percentage;
+                                const spent = spentPerCategory[category] || 0;
+                                const difference = suggested - spent;
+                                const progress = suggested > 0 ? (spent / suggested) * 100 : 0;
+                                return (
+                                    <div key={category} className="p-4 border rounded-lg bg-gray-50">
+                                        <h4 className="font-bold text-gray-700">{category}</h4>
+                                        <p className="text-xs text-gray-500">Sugerăm: {suggested.toFixed(0)} RON ({(percentage * 100).toFixed(0)}%)</p>
+                                        <p className="text-sm font-semibold">Cheltuit: {spent.toFixed(0)} RON</p>
+                                        <div className="w-full bg-gray-200 rounded-full h-2.5 my-2"><div className={`h-2.5 rounded-full ${progress > 100 ? 'bg-red-500' : 'bg-green-500'}`} style={{ width: `${Math.min(progress, 100)}%` }}></div></div>
+                                        <p className={`text-xs font-medium ${difference >= 0 ? 'text-green-600' : 'text-red-600'}`}>{difference >= 0 ? `Rămas: ${difference.toFixed(0)} RON` : `Depășit: ${Math.abs(difference).toFixed(0)} RON`}</p>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+                ) : (<p className="text-center text-gray-500">Setați un buget total pentru a vedea sugestiile de alocare a cheltuielilor.</p>)}
             </div>
 
             {/* Tracker Section */}
@@ -423,6 +599,7 @@ const Budget = ({ userId, showAlert, showConfirm }) => {
         </div>
     );
 };
+
 
 const TodoList = ({ userId, showAlert, showConfirm }) => {
     const [tasks, setTasks] = useState([]);
@@ -588,22 +765,22 @@ const VendorList = ({ userId, showAlert, showConfirm }) => {
     const handleAddOrUpdateVendor = async () => { if (!vendorName.trim()) { showAlert("Numele furnizorului este obligatoriu.", "Eroare"); return; } const vendorData = { name: vendorName, type: vendorType, contact: contactPerson, phone, email, notes }; try { if (currentVendor) await updateDoc(doc(db, vendorsCollectionPath, currentVendor.id), vendorData); else await addDoc(collection(db, vendorsCollectionPath), vendorData); closeModal(); } catch (err) { showAlert(`Eroare salvare: ${err.message}`, "Eroare"); } };
     const handleDeleteVendor = (vendorId) => { showConfirm("Sigur ștergi acest furnizor?", "Confirmare", async () => { try { await deleteDoc(doc(db, vendorsCollectionPath, vendorId)); } catch (err) { showAlert(`Eroare ștergere: ${err.message}`, "Eroare"); } }); };
     const openModal = (vendor = null) => { setCurrentVendor(vendor); setVendorName(vendor?.name || ''); setVendorType(vendor?.type || 'Fotograf'); setContactPerson(vendor?.contact || ''); setPhone(vendor?.phone || ''); setEmail(vendor?.email || ''); setNotes(vendor?.notes || ''); setIsModalOpen(true); };
-    const closeModal = () => { setIsModalOpen(false); setCurrentVendor(null); };
+    const closeModal = () => { setIsModalOpen(false); };
     return (
         <div className="p-6 bg-purple-50 rounded-lg shadow-md">
              <div className="flex justify-between items-center mb-6"><h2 className="text-2xl font-semibold text-purple-700">Furnizori</h2><button onClick={() => openModal()} className="bg-purple-500 hover:bg-purple-600 text-white font-semibold py-2 px-4 rounded-lg shadow flex items-center"><PlusCircle size={20} className="mr-2" /> Adaugă Furnizor</button></div>
              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">{vendors.map(vendor => (
                 <div key={vendor.id} className="bg-white p-4 rounded-lg shadow-sm border border-purple-200"><div className="flex justify-between items-start"><div><h3 className="text-lg font-medium text-purple-800">{vendor.name}</h3><p className="text-sm text-purple-600">{vendor.type}</p>{vendor.contact && <p className="text-xs text-gray-500 mt-1">Contact: {vendor.contact}</p>}{vendor.phone && <p className="text-xs text-gray-500">Telefon: <a href={`tel:${vendor.phone}`} className="hover:underline">{vendor.phone}</a></p>}{vendor.email && <p className="text-xs text-gray-500">Email: <a href={`mailto:${vendor.email}`} className="hover:underline">{vendor.email}</a></p>}{vendor.notes && <p className="text-xs text-gray-500 mt-1">Notițe: {vendor.notes}</p>}</div><div className="flex flex-col space-y-1"><button onClick={() => openModal(vendor)} className="text-blue-500 hover:text-blue-700 p-1"><Edit2 size={18} /></button><button onClick={() => handleDeleteVendor(vendor.id)} className="text-red-500 hover:text-red-700 p-1"><Trash2 size={18} /></button></div></div></div>))}</div>
              <Modal isOpen={isModalOpen} onClose={closeModal} title={currentVendor ? "Modifică Furnizor" : "Adaugă Furnizor Nou"}>
-                 <div className="space-y-3">
-                     <div><label htmlFor="vendorName" className="block text-sm font-medium text-gray-700">Nume Furnizor:</label><input type="text" id="vendorName" value={vendorName} onChange={(e) => setVendorName(e.target.value)} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md" placeholder="Ex: Foto Magic"/></div>
-                     <div><label htmlFor="vendorType" className="block text-sm font-medium text-gray-700">Tip Furnizor:</label><select id="vendorType" value={vendorType} onChange={(e) => setVendorType(e.target.value)} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md">{vendorTypes.map(type => <option key={type} value={type}>{type}</option>)}</select></div>
-                     <div><label htmlFor="contactPerson" className="block text-sm font-medium text-gray-700">Persoană Contact:</label><input type="text" id="contactPerson" value={contactPerson} onChange={(e) => setContactPerson(e.target.value)} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md" placeholder="Ex: Ana Popescu"/></div>
-                     <div><label htmlFor="phone" className="block text-sm font-medium text-gray-700">Telefon:</label><input type="tel" id="phone" value={phone} onChange={(e) => setPhone(e.target.value)} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md" placeholder="Ex: 0722123456"/></div>
-                     <div><label htmlFor="email" className="block text-sm font-medium text-gray-700">Email:</label><input type="email" id="email" value={email} onChange={(e) => setEmail(e.target.value)} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md" placeholder="Ex: contact@fotomagic.ro"/></div>
-                     <div><label htmlFor="vendorNotes" className="block text-sm font-medium text-gray-700">Notițe:</label><textarea id="vendorNotes" value={notes} onChange={(e) => setNotes(e.target.value)} rows="2" className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md" placeholder="Ex: Pachet premium"></textarea></div>
-                     <div className="flex justify-end space-x-3"><button onClick={closeModal} className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md">Anulează</button><button onClick={handleAddOrUpdateVendor} className="px-4 py-2 text-sm font-medium text-white bg-purple-500 rounded-md flex items-center"><Save size={16} className="mr-2" /> Salvează</button></div>
-                 </div>
+                <div className="space-y-3">
+                    <div><label htmlFor="vendorName" className="block text-sm font-medium text-gray-700">Nume Furnizor:</label><input type="text" id="vendorName" value={vendorName} onChange={(e) => setVendorName(e.target.value)} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md" placeholder="Ex: Foto Magic"/></div>
+                    <div><label htmlFor="vendorType" className="block text-sm font-medium text-gray-700">Tip Furnizor:</label><select id="vendorType" value={vendorType} onChange={(e) => setVendorType(e.target.value)} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md">{vendorTypes.map(type => <option key={type} value={type}>{type}</option>)}</select></div>
+                    <div><label htmlFor="contactPerson" className="block text-sm font-medium text-gray-700">Persoană Contact:</label><input type="text" id="contactPerson" value={contactPerson} onChange={(e) => setContactPerson(e.target.value)} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md" placeholder="Ex: Ana Popescu"/></div>
+                    <div><label htmlFor="phone" className="block text-sm font-medium text-gray-700">Telefon:</label><input type="tel" id="phone" value={phone} onChange={(e) => setPhone(e.target.value)} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md" placeholder="Ex: 0722123456"/></div>
+                    <div><label htmlFor="email" className="block text-sm font-medium text-gray-700">Email:</label><input type="email" id="email" value={email} onChange={(e) => setEmail(e.target.value)} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md" placeholder="Ex: contact@fotomagic.ro"/></div>
+                    <div><label htmlFor="vendorNotes" className="block text-sm font-medium text-gray-700">Notițe:</label><textarea id="vendorNotes" value={notes} onChange={(e) => setNotes(e.target.value)} rows="2" className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md" placeholder="Ex: Pachet premium"></textarea></div>
+                    <div className="flex justify-end space-x-3"><button onClick={closeModal} className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md">Anulează</button><button onClick={handleAddOrUpdateVendor} className="px-4 py-2 text-sm font-medium text-white bg-purple-500 rounded-md flex items-center"><Save size={16} className="mr-2" /> Salvează</button></div>
+                </div>
              </Modal>
         </div>
     );
@@ -613,13 +790,24 @@ const SeatingChart = ({ userId, showAlert }) => {
     const [guests, setGuests] = useState([]);
     const [tables, setTables] = useState([]);
     const [newTableName, setNewTableName] = useState("");
+    const [draggedOverTarget, setDraggedOverTarget] = useState(null); // Can be table ID or 'unassigned'
+
     const guestsCollectionPath = `artifacts/${appId}/users/${userId}/guests`;
     const seatingCollectionPath = `artifacts/${appId}/users/${userId}/seating`;
 
     useEffect(() => {
         if (!userId) return;
-        const unsubGuests = onSnapshot(query(collection(db, guestsCollectionPath)), (snap) => setGuests(snap.docs.map(d => ({ id: d.id, ...d.data() }))));
-        const unsubSeating = onSnapshot(doc(db, seatingCollectionPath, 'layout'), (docSnap) => { if (docSnap.exists()) setTables(docSnap.data().tables || []); });
+        const unsubGuests = onSnapshot(query(collection(db, guestsCollectionPath)), (snap) => {
+            const confirmedGuests = snap.docs
+                .map(d => ({ id: d.id, ...d.data() }))
+                .filter(g => g.rsvp === 'Confirmat');
+            setGuests(confirmedGuests);
+        });
+        const unsubSeating = onSnapshot(doc(db, seatingCollectionPath, 'layout'), (docSnap) => {
+            if (docSnap.exists()) {
+                setTables(docSnap.data().tables || []);
+            }
+        });
         return () => { unsubGuests(); unsubSeating(); };
     }, [userId]);
 
@@ -629,45 +817,55 @@ const SeatingChart = ({ userId, showAlert }) => {
         await setDoc(doc(db, seatingCollectionPath, 'layout'), { tables: updatedTables }, { merge: true });
         setNewTableName("");
     };
-    
-    const handleDrop = async (e, tableId) => {
+
+    const handleDeleteTable = async (tableId) => {
+        const tableToDelete = tables.find(t => t.id === tableId);
+        if (tableToDelete && tableToDelete.guests.length > 0) {
+            showAlert("Nu poți șterge o masă care are invitați alocați.", "Eroare");
+            return;
+        }
+        const updatedTables = tables.filter(t => t.id !== tableId);
+        await setDoc(doc(db, seatingCollectionPath, 'layout'), { tables: updatedTables });
+    };
+
+    const handleDrop = async (e, targetTableId) => {
         e.preventDefault();
+        setDraggedOverTarget(null);
         const guestId = e.dataTransfer.getData("guestId");
-        let guestToAdd = null;
-        
-        // Find the guest and remove them from any existing table
-        const newTables = tables.map(t => {
-            const guestIndex = t.guests.findIndex(g => g.id === guestId);
-            if (guestIndex > -1) {
-                guestToAdd = t.guests[guestIndex];
-                const newGuests = [...t.guests];
-                newGuests.splice(guestIndex, 1);
-                return { ...t, guests: newGuests };
+        if (!guestId) return;
+
+        const guestBeingDragged = guests.find(g => g.id === guestId);
+        if (!guestBeingDragged) return;
+
+        let newTables = tables.map(table => ({
+            ...table,
+            guests: table.guests.filter(g => g.id !== guestId)
+        }));
+
+        if (targetTableId) {
+            const targetTable = newTables.find(t => t.id === targetTableId);
+            if (targetTable) {
+                targetTable.guests.push(guestBeingDragged);
             }
-            return t;
-        });
-
-        // If guest wasn't in a table, find them in the main guest list
-        if (!guestToAdd) {
-            guestToAdd = guests.find(g => g.id === guestId);
         }
-
-        // Add the guest to the target table
-        const targetTableIndex = newTables.findIndex(t => t.id === tableId);
-        if (targetTableIndex > -1 && guestToAdd) {
-            newTables[targetTableIndex].guests.push(guestToAdd);
-        }
-        
         await setDoc(doc(db, seatingCollectionPath, 'layout'), { tables: newTables });
     };
 
     const handleDragStart = (e, guestId) => e.dataTransfer.setData("guestId", guestId);
+    
     const unassignedGuests = guests.filter(g => !tables.some(t => t.guests.some(guestInTable => guestInTable.id === g.id)));
 
     return (
-        <div className="p-4 md:p-6 bg-indigo-50 rounded-lg shadow-md flex flex-col md:flex-row gap-4 h-full">
-            <div className="w-full md:w-1/3 bg-white p-2 md:p-4 rounded-lg shadow-inner flex flex-col min-w-0 h-[300px] md:h-auto">
+        <div className="p-4 md:p-6 bg-indigo-50 rounded-lg shadow-md flex flex-col md:flex-row gap-4">
+            <div 
+                className={`w-full md:w-1/3 bg-white p-2 md:p-4 rounded-lg shadow-inner flex flex-col min-w-0 transition-colors ${draggedOverTarget === 'unassigned' ? 'bg-indigo-100' : ''}`}
+                onDragOver={e => e.preventDefault()}
+                onDragEnter={() => setDraggedOverTarget('unassigned')}
+                onDragLeave={() => setDraggedOverTarget(null)}
+                onDrop={(e) => handleDrop(e, null)}
+            >
                 <h3 className="text-base md:text-lg font-semibold text-indigo-800 mb-4 sticky top-0 bg-white pb-2 z-10">Invitați Nealocați ({unassignedGuests.length})</h3>
+                 <p className="text-xs text-gray-500 mb-2">Doar invitații confirmați apar aici. Trage-i la o masă.</p>
                 <div className="space-y-2 overflow-y-auto">
                     {unassignedGuests.map(guest => (
                         <div key={guest.id} draggable onDragStart={(e) => handleDragStart(e, guest.id)} className="p-2 text-sm bg-indigo-100 rounded cursor-grab shadow-sm hover:shadow-md transition-shadow truncate">
@@ -686,14 +884,22 @@ const SeatingChart = ({ userId, showAlert }) => {
                 </div>
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                     {tables.map(table => (
-                        <div key={table.id} onDragOver={e => e.preventDefault()} onDrop={e => handleDrop(e, table.id)} 
-                             className="bg-white p-4 rounded-lg shadow-lg border-t-4 border-indigo-400 min-h-[200px]">
-                            <h4 className="font-bold text-indigo-800 mb-3 text-center border-b pb-2 truncate">{table.name}</h4>
+                        <div 
+                            key={table.id} 
+                            onDragOver={e => e.preventDefault()}
+                            onDragEnter={() => setDraggedOverTarget(table.id)}
+                            onDragLeave={() => setDraggedOverTarget(null)}
+                            onDrop={e => handleDrop(e, table.id)}
+                            className={`p-4 rounded-lg shadow-lg border-t-4 border-indigo-400 min-h-[200px] transition-colors ${draggedOverTarget === table.id ? 'bg-indigo-100' : 'bg-white'}`}
+                        >
+                            <div className="flex justify-between items-center mb-3 border-b pb-2">
+                                <h4 className="font-bold text-indigo-800 truncate">{table.name}</h4>
+                                <button onClick={() => handleDeleteTable(table.id)} className="text-red-400 hover:text-red-600 p-1"><Trash2 size={16}/></button>
+                            </div>
                             <div className="space-y-2">
                                 {table.guests.map(guest => (
-                                    <div key={guest.id} draggable onDragStart={(e) => handleDragStart(e, guest.id)} 
-                                         className="p-1.5 bg-gray-100 rounded text-sm cursor-grab truncate">
-                                         {guest.name}
+                                    <div key={guest.id} draggable onDragStart={(e) => handleDragStart(e, guest.id)} className="p-1.5 bg-gray-100 rounded text-sm cursor-grab truncate">
+                                        {guest.name}
                                     </div>
                                 ))}
                                 {table.guests.length === 0 && <p className="text-xs text-center text-gray-400 pt-8">Trage un invitat aici</p>}
@@ -707,7 +913,62 @@ const SeatingChart = ({ userId, showAlert }) => {
 };
 
 
-// Main APP component with authentication logic
+const LoginPage = ({ onLogin }) => {
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
+
+    const handleLogin = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+        setError('');
+        try {
+            await onLogin(email, password);
+        } catch (err) {
+            setError("Email sau parolă incorectă. Vă rugăm încercați din nou.");
+            console.error("Login error:", err);
+        }
+        setLoading(false);
+    };
+
+    return (
+        <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-pink-200 via-purple-100 to-indigo-200">
+            <div className="w-full max-w-md p-8 space-y-8 bg-white rounded-xl shadow-2xl">
+                <div className="text-center">
+                    <h2 className="mt-6 text-3xl font-bold text-gray-900">Bine ai revenit!</h2>
+                    <p className="mt-2 text-sm text-gray-600">Autentifică-te pentru a continua planificarea.</p>
+                </div>
+                <form className="mt-8 space-y-6" onSubmit={handleLogin}>
+                    <div className="rounded-md shadow-sm -space-y-px">
+                        <div>
+                            <label htmlFor="email-address" className="sr-only">Adresă de e-mail</label>
+                            <input id="email-address" name="email" type="email" autoComplete="email" required value={email} onChange={(e) => setEmail(e.target.value)}
+                                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-pink-500 focus:border-pink-500 focus:z-10 sm:text-sm"
+                                placeholder="Adresă de e-mail" />
+                        </div>
+                        <div>
+                            <label htmlFor="password" className="sr-only">Parolă</label>
+                            <input id="password" name="password" type="password" autoComplete="current-password" required value={password} onChange={(e) => setPassword(e.target.value)}
+                                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-pink-500 focus:border-pink-500 focus:z-10 sm:text-sm"
+                                placeholder="Parolă" />
+                        </div>
+                    </div>
+                    {error && <p className="text-sm text-red-600 text-center">{error}</p>}
+                    <div>
+                        <button type="submit" disabled={loading}
+                            className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-pink-600 hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500 disabled:bg-pink-300">
+                            {loading ? 'Se încarcă...' : 'Autentificare'}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    );
+};
+
+
+// Componenta principală APP
 function App() {
   const [currentView, setCurrentView] = useState('panou');
   const [user, setUser] = useState(null);
@@ -719,74 +980,91 @@ function App() {
   const [stats, setStats] = useState({ guestsTotal: 0, guestsConfirmed: 0, budgetSpent: 0, tasksTotal: 0, tasksCompleted: 0 });
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
   const [tempWeddingDate, setTempWeddingDate] = useState("");
- 
-  // Effect for handling initial authentication
-   useEffect(() => {
-    const attemptSignIn = async () => {
-        if (auth.currentUser) {
-            setUser(auth.currentUser);
-            setIsAuthReady(true);
-            return;
-        }
+  
+  const [isPremium, setIsPremium] = useState(false);
+  const [subscriptionStatus, setSubscriptionStatus] = useState('none');
+  const [trialDaysRemaining, setTrialDaysRemaining] = useState(0);
+  const [isUpgradeModalOpen, setIsUpgradeModalOpen] = useState(false);
 
-        try {
-            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                await signInWithCustomToken(auth, __initial_auth_token);
-            } else {
-                await signInAnonymously(auth);
-            }
-        } catch (error) {
-            console.error("Authentication failed:", error);
-            // Fallback to anonymous just in case custom token fails
-            if (!auth.currentUser) {
-               await signInAnonymously(auth);
-            }
-        } finally {
-            setIsAuthReady(true);
-        }
-    };
-
-    attemptSignIn();
-  }, []);
-
-
-  // Effect for listening to auth state changes and loading data
   useEffect(() => {
-    if (!isAuthReady) return;
-
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-        setUser(user);
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
         if (user) {
-            const settingsDocRef = doc(db, `artifacts/${appId}/users/${user.uid}/settings`, 'main');
-            const unsubSettings = onSnapshot(settingsDocRef, (docSnap) => {
+            const userDocRef = doc(db, "users", user.uid);
+            
+            const userDocSnap = await getDoc(userDocRef);
+            if (!userDocSnap.exists()) {
+                await setDoc(userDocRef, {
+                    createdAt: new Date(),
+                    subscriptionStatus: 'trialing'
+                });
+            }
+
+            const unsubUser = onSnapshot(userDocRef, (docSnap) => {
                 if (docSnap.exists()) {
                     const data = docSnap.data();
-                    setWeddingDate(data.weddingDate);
-                    setTempWeddingDate(data.weddingDate || "");
+                    const status = data.subscriptionStatus;
+                    const createdAt = data.createdAt?.toDate();
+                    
+                    let premiumStatus = false;
+                    let trialDaysLeft = 0;
+
+                    if (status === 'active') {
+                        premiumStatus = true;
+                    } else if (status === 'trialing' && createdAt) {
+                        const now = new Date();
+                        const trialEndDate = new Date(createdAt.getTime() + 7 * 24 * 60 * 60 * 1000);
+                        
+                        if (now < trialEndDate) {
+                            premiumStatus = true;
+                            trialDaysLeft = Math.ceil((trialEndDate - now) / (1000 * 60 * 60 * 24));
+                        } else {
+                            updateDoc(userDocRef, { subscriptionStatus: 'trial_expired' });
+                            premiumStatus = false;
+                        }
+                    }
+                    
+                    setIsPremium(premiumStatus);
+                    setSubscriptionStatus(status);
+                    setTrialDaysRemaining(trialDaysLeft);
+                } else {
+                    setIsPremium(false);
+                    setSubscriptionStatus('none');
                 }
             });
 
-            const unsubGuests = onSnapshot(query(collection(db, `artifacts/${appId}/users/${user.uid}/guests`)), (snap) => setStats(s => ({ ...s, guestsTotal: snap.docs.length, guestsConfirmed: snap.docs.filter(d => d.data().rsvp === 'Confirmat').length })));
-            const unsubBudget = onSnapshot(query(collection(db, `artifacts/${appId}/users/${user.uid}/budgetItems`)), (snap) => setStats(s => ({ ...s, budgetSpent: snap.docs.reduce((sum, doc) => sum + (doc.data().actualCost || 0), 0) })));
-            const unsubTasks = onSnapshot(query(collection(db, `artifacts/${appId}/users/${user.uid}/tasks`)), (snap) => setStats(s => ({ ...s, tasksTotal: snap.docs.length, tasksCompleted: snap.docs.filter(d => d.data().completed).length })));
+            const guestsPath = `artifacts/${appId}/users/${user.uid}/guests`;
+            const budgetPath = `artifacts/${appId}/users/${user.uid}/budgetItems`;
+            const tasksPath = `artifacts/${appId}/users/${user.uid}/tasks`;
+            const settingsPath = doc(db, `artifacts/${appId}/users/${user.uid}/settings`, 'main');
+
+            const unsubGuests = onSnapshot(query(collection(db, guestsPath)), (snap) => setStats(s => ({ ...s, guestsTotal: snap.docs.length, guestsConfirmed: snap.docs.filter(d => d.data().rsvp === 'Confirmat').length })));
+            const unsubBudget = onSnapshot(query(collection(db, budgetPath)), (snap) => setStats(s => ({ ...s, budgetSpent: snap.docs.reduce((sum, doc) => sum + (Number(doc.data().actualCost) || 0), 0) })));
+            const unsubTasks = onSnapshot(query(collection(db, tasksPath)), (snap) => setStats(s => ({ ...s, tasksTotal: snap.docs.length, tasksCompleted: snap.docs.filter(d => d.data().completed).length })));
+            const unsubWeddingDate = onSnapshot(settingsPath, (doc) => { if (doc.exists()) { const data = doc.data(); setWeddingDate(data.weddingDate); setTempWeddingDate(data.weddingDate || ""); } });
             
-            return () => { unsubSettings(); unsubGuests(); unsubBudget(); unsubTasks(); };
+            setUser(user);
+            setIsAuthReady(true);
+            return () => { unsubUser(); unsubGuests(); unsubBudget(); unsubTasks(); unsubWeddingDate(); };
         } else {
-            // Clear data if user logs out
-            setStats({ guestsTotal: 0, guestsConfirmed: 0, budgetSpent: 0, tasksTotal: 0, tasksCompleted: 0 });
-            setWeddingDate(null);
+            setUser(null);
+            setIsAuthReady(true);
         }
     });
-
     return () => unsubscribe();
-  }, [isAuthReady]);
+  }, []);
+
+  const handleLogin = (email, password) => {
+    return signInWithEmailAndPassword(auth, email, password);
+  };
 
   const handleLogout = async () => {
     await signOut(auth);
-    // After sign out, sign in anonymously again so the app doesn't go blank.
-    await signInAnonymously(auth);
   };
   
+  const handleUpgrade = () => {
+      setIsUpgradeModalOpen(true);
+  };
+
   const handleSaveSettings = async () => {
     if (!user) return;
     const settingsDocRef = doc(db, `artifacts/${appId}/users/${user.uid}/settings`, 'main');
@@ -795,8 +1073,35 @@ function App() {
     showAlert("Data nunții a fost salvată!", "Succes");
   };
 
-  if (!isAuthReady || !user) {
-    return <div className="flex justify-center items-center h-screen bg-gray-100"><div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-pink-500"></div></div>;
+  if (!isAuthReady) {
+    return <div className="flex justify-center items-center h-screen"><div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-pink-500"></div></div>;
+  }
+
+  if (!user) {
+    return <LoginPage onLogin={handleLogin} />;
+  }
+
+  // Aici este noua logică de blocare totală
+  if (!isPremium && subscriptionStatus === 'trial_expired') {
+      return (
+          <>
+              <TrialExpiredScreen onUpgrade={handleUpgrade} />
+              <Modal isOpen={isUpgradeModalOpen} onClose={() => setIsUpgradeModalOpen(false)} title="Treci la Premium">
+                <div className="text-center">
+                    <p className="p-3 mb-4 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 rounded-r-lg text-left font-bold">Perioada de probă a expirat!</p>
+                    <Star className="mx-auto h-16 w-16 text-yellow-400" />
+                    <h3 className="mt-4 text-2xl font-bold text-gray-900">Deblochează tot potențialul!</h3>
+                    <div className="mt-6">
+                        <p className="text-3xl font-extrabold text-gray-900">Doar 99 lei (aprox. 20€)</p>
+                        <p className="text-sm text-gray-500">Plată unică, acces pe viață.</p>
+                    </div>
+                    <button onClick={() => showAlert("Funcționalitatea de plată nu este încă implementată.", "Info")} className="mt-6 w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-lg shadow-lg text-lg">
+                        Activează Premium Acum
+                    </button>
+                </div>
+              </Modal>
+          </>
+      );
   }
 
   const renderView = () => {
@@ -804,7 +1109,7 @@ function App() {
     switch (currentView) {
       case 'panou': return <Dashboard userId={user.uid} weddingDate={weddingDate} stats={stats} onSettingsClick={() => setIsSettingsModalOpen(true)} />;
       case 'invitati': return <GuestList {...commonProps} />;
-      case 'buget': return <Budget {...commonProps} />;
+      case 'buget': return <Budget db={db} appId={appId} {...commonProps} />;
       case 'sarcini': return <TodoList {...commonProps} />;
       case 'furnizori': return <VendorList {...commonProps} />;
       case 'mese': return <SeatingChart {...commonProps} />;
@@ -812,13 +1117,11 @@ function App() {
     }
   };
   
-  const NavButton = ({ view, label, icon: Icon }) => {
-    return (
-        <button onClick={() => setCurrentView(view)} className={`flex-1 sm:flex-none flex flex-col sm:flex-row items-center justify-center sm:justify-start space-y-1 sm:space-y-0 sm:space-x-2 px-3 py-3 text-sm font-medium rounded-md transition-colors duration-150 ${currentView === view ? 'bg-pink-600 text-white shadow-lg' : 'text-pink-100 hover:bg-pink-500'}`}>
-            <Icon size={20} /><span>{label}</span>
-        </button>
-    );
-  };
+  const NavButton = ({ view, label, icon: Icon }) => (
+    <button onClick={() => setCurrentView(view)} className={`flex-1 sm:flex-none flex flex-col sm:flex-row items-center justify-center sm:justify-start space-y-1 sm:space-y-0 sm:space-x-2 px-3 py-3 text-sm font-medium rounded-md transition-colors duration-150 ${currentView === view ? 'bg-pink-600 text-white shadow-lg' : 'text-pink-100 hover:bg-pink-500'}`}>
+        <Icon size={20} /><span>{label}</span>
+    </button>
+  );
 
   return (
     <div className="min-h-screen bg-gray-100 font-sans">
@@ -826,7 +1129,7 @@ function App() {
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
             <h1 className="text-3xl font-bold tracking-tight">Planificator de Nuntă</h1>
             <div className="flex items-center gap-4">
-                {user && <span className="text-sm hidden sm:inline">ID Utilizator: {user.uid.substring(0, 8)}...</span>}
+                {user && <span className="text-sm hidden sm:inline">Salut, {user.displayName || user.email}!</span>}
                 <button onClick={handleLogout} className="bg-pink-100 text-pink-700 font-bold py-1 px-3 rounded-md text-sm hover:bg-pink-200 transition flex items-center gap-2">
                     <LogOut size={16}/> Deconectare
                 </button>
@@ -843,6 +1146,8 @@ function App() {
             <NavButton view="furnizori" label="Furnizori" icon={Briefcase} />
       </div></div></nav>
 
+      {subscriptionStatus === 'trialing' && <TrialInfoBanner daysLeft={trialDaysRemaining} onUpgrade={handleUpgrade} />}
+
       <main className="container mx-auto p-4 sm:p-6">{renderView()}</main>
 
       <footer className="text-center py-6 text-sm text-pink-700"><p>&copy; {new Date().getFullYear()} Planificatorul Tău de Nuntă</p></footer>
@@ -852,6 +1157,31 @@ function App() {
       <Modal isOpen={isSettingsModalOpen} onClose={() => setIsSettingsModalOpen(false)} title="Setări Nuntă">
         <div><label htmlFor="weddingDate" className="block text-sm font-medium text-gray-700">Data Nunții:</label><input type="date" id="weddingDate" value={tempWeddingDate} onChange={e => setTempWeddingDate(e.target.value)} className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"/></div>
         <div className="mt-6 flex justify-end"><button onClick={handleSaveSettings} className="bg-pink-500 text-white font-semibold py-2 px-4 rounded-lg shadow">Salvează Setările</button></div>
+      </Modal>
+      <Modal isOpen={isUpgradeModalOpen} onClose={() => setIsUpgradeModalOpen(false)} title="Treci la Premium">
+        <div className="text-center">
+             {subscriptionStatus === 'trial_expired' && (
+                <div className="p-3 mb-4 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 rounded-r-lg text-left">
+                    <p className="font-bold">Perioada de probă a expirat!</p>
+                    <p className="text-sm">Activează premium pentru a redobândi accesul la toate funcționalitățile.</p>
+                </div>
+            )}
+            <Star className="mx-auto h-16 w-16 text-yellow-400" />
+            <h3 className="mt-4 text-2xl font-bold text-gray-900">Deblochează tot potențialul!</h3>
+            <p className="mt-2 text-gray-600">Obține acces la funcționalități avansate pentru o planificare fără stres:</p>
+            <ul className="mt-4 text-left space-y-2 text-gray-600 list-disc list-inside">
+                <li><span className="font-semibold">Planificator de Buget Inteligent:</span> Primește sugestii de alocare a bugetului.</li>
+                <li><span className="font-semibold">Aranjarea la Mese:</span> Organizează vizual invitații cu drag & drop.</li>
+                <li>Și multe alte surprize pe viitor!</li>
+            </ul>
+            <div className="mt-6">
+                <p className="text-3xl font-extrabold text-gray-900">Doar 99 lei (aprox. 20€)</p>
+                <p className="text-sm text-gray-500">Plată unică, acces pe viață.</p>
+            </div>
+            <button onClick={() => showAlert("Funcționalitatea de plată nu este încă implementată.", "Info")} className="mt-6 w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-lg shadow-lg text-lg">
+                Activează Premium Acum
+            </button>
+        </div>
       </Modal>
     </div>
   );
